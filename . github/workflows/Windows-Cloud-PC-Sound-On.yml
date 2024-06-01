@@ -1,0 +1,29 @@
+name: Windows Cloud PC (Sounds On)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 9999
+    
+    steps:
+      - name: Downloading Essentials
+        run: |
+          Invoke-WebRequest -Uri "https://www.dropbox.com/scl/fi/nlx5eom9f00k9d9hy5pvx/Downloads.bat?rlkey=wyivysvz7qhw4ewbywo4mm1d0&dl=1" -OutFile "Downloads.bat"
+          cmd /c Downloads.bat
+
+      - name: Connecting Ngrok Account
+        run: ngrok config add-authtoken $Env:NGROK_AUTH_TOKEN
+        env:
+          NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+          
+      - name: Enabling RDP Access
+        run: cmd /c Access.bat       
+
+      - name: Log In To Remote Desktop Protocol
+        run: cmd /c startaudio.bat
+
+      - name: Time Count
+        run: cmd /c loop.bat
